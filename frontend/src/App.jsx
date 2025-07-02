@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -11,6 +12,7 @@ export default function App() {
 
     setResponse(newMessages);
     setPrompt(""); // Clear the input field after submission
+    setLoading(true);
 
     try {
       // Send the prompt to the FastAPI backend
@@ -31,6 +33,7 @@ export default function App() {
       console.log("Response from backend:", data);
       const assistantResponse = data.choices[0].message.content;
 
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // fake delay
       setResponse((prev) => [
         ...prev,
         { role: "assistant", content: assistantResponse },
@@ -44,6 +47,7 @@ export default function App() {
         },
       ]);
     }
+    setLoading(false);
   };
 
   return (
@@ -61,6 +65,11 @@ export default function App() {
           Ask Agent
         </button>
       </form>
+      {loading && (
+        <div className="p-3 rounded-lg bg-gray-200 text-black text-left italic animate-pulse">
+          Assistant is typing...
+        </div>
+      )}
 
       {response.length > 0 && (
         <div className="mt-8 w-full max-w-xl space-y-4">
