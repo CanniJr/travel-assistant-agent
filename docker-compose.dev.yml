@@ -1,0 +1,13 @@
+services:
+  frontend:
+    container_name: travel-assistant-frontend-dev
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Prevents overwriting node_modules in container
+    working_dir: /app
+    command: npm run dev
